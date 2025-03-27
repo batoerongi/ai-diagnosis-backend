@@ -1,16 +1,22 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from PIL import Image
 import io
 import random
 
 app = Flask(__name__)
+CORS(app)  # Allow connections from frontend
+
+@app.route("/")
+def home():
+    return "AI Diagnosis Backend is running."
 
 @app.route('/diagnose', methods=['POST'])
 def diagnose():
-    if 'file' not in request.files:
+    if 'image' not in request.files:
         return jsonify({'status': 'error', 'message': 'Tiada gambar dimuat naik.'}), 400
 
-    file = request.files['file']
+    file = request.files['image']
     if file.filename == '':
         return jsonify({'status': 'error', 'message': 'Fail kosong.'}), 400
 
@@ -18,7 +24,7 @@ def diagnose():
         img = Image.open(file.stream)
         img = img.convert("RGB")
 
-        # Simulated AI response (replace with real model later)
+        # Simulated AI response (you can plug in real AI later)
         simulated_diagnosis = random.choice([
             {"result": "Daun sihat", "suggestion": "Tiada rawatan diperlukan."},
             {"result": "Hawar Daun", "suggestion": "Gunakan fungisida kuprum & elakkan penyiraman petang."},
@@ -38,4 +44,5 @@ def diagnose():
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=10000)
+
 
